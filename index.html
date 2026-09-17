@@ -10,169 +10,204 @@
 <style>
   :root{
     --blue:#003B7A; --deep:#002246; --yellow:#FEE01A;
-    --ink:#16283C; --soft:#6B7E93; --line:#DCE4EC;
-    --paper:#EEF2F6; --white:#fff; --alert:#C63B3B;
+    --ink:#172A3D; --soft:#667B91; --muted:#8EA0B2; --line:#DCE5ED;
+    --paper:#F3F6F8; --white:#FFF; --alert:#C83F43; --wash:#F7FAFC;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;background:var(--paper);color:var(--ink);
-    font:15px/1.45 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
+    font:14px/1.4 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
+  button{font:inherit}
 
-  .bar{background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;
-    padding:0 20px;height:48px;gap:16px}
-  .mark{font-size:18px;font-weight:700;letter-spacing:-.4px}
+  .bar{height:52px;padding:0 24px;background:var(--blue);color:#fff;display:flex;
+    align-items:center;justify-content:space-between;gap:20px}
+  .mark{font-size:18px;font-weight:750;letter-spacing:-.4px}
   .mark span{color:var(--yellow)}
-  .bar .meta{font-size:13px;color:#AFC8DE}
-  .bar .meta b{color:#fff;font-weight:600}
+  .meta{font-size:12px;color:#BCD0E1}
+  .meta b{color:#fff;font-weight:650}
 
-  .grid{display:grid;grid-template-columns:minmax(190px,17%) minmax(0,1fr);gap:12px;padding:12px;
-    height:calc(100% - 48px);min-height:0}
-  .panel{background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
-  .ph{display:flex;justify-content:space-between;align-items:baseline;
-    padding:8px 13px;border-bottom:1px solid var(--line);flex:0 0 auto}
-  .ph h2{margin:0;font-size:14px;font-weight:600}
-  .ph em{font-style:normal;font-size:12.5px;color:var(--soft)}
+  main{height:calc(100% - 52px);padding:14px;display:grid;
+    grid-template-columns:minmax(280px,30%) minmax(0,1fr);gap:14px;min-height:0}
+  .panel{min-height:0;background:var(--white);border:1px solid var(--line);border-radius:8px;
+    overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(14,39,64,.04)}
+  .panel-head{height:46px;padding:0 16px;border-bottom:1px solid var(--line);display:flex;
+    align-items:center;justify-content:space-between;flex:0 0 auto}
+  .panel-head h2{margin:0;font-size:14px;font-weight:700}
+  .panel-head span{font-size:12px;color:var(--soft)}
 
-  #map{flex:1 1 auto;min-height:320px;background:#E8EEF3}
+  #map{flex:1;min-height:280px;background:#E8EEF3}
   .leaflet-container{font:inherit}
-  .leaflet-control-attribution{font-size:10px;color:#93A5B8}
-  .lbl{background:transparent;border:0;box-shadow:none;padding:0;
-    font:600 11.5px "Segoe UI",system-ui,sans-serif;color:#2C3E52;white-space:nowrap}
+  .leaflet-control-attribution{font-size:9px;color:var(--muted)}
+  .lbl{padding:0;background:transparent;border:0;box-shadow:none;
+    font:650 11px "Segoe UI",system-ui,sans-serif;color:#294158;white-space:nowrap}
   .lbl:before{display:none}
 
-  .cases{overflow-y:auto;min-height:0}
-  .case{border-bottom:1px solid var(--line);padding:1px 11px}
+  .cases{min-height:0;overflow-y:auto;display:grid;grid-template-rows:repeat(3,minmax(0,1fr))}
+  .case{position:relative;padding:13px 15px;border-bottom:1px solid var(--line);min-height:0;
+    display:flex;flex-direction:column;justify-content:center;transition:background .15s ease}
   .case:last-child{border-bottom:0}
-  .case.on{background:#F7FAFC;box-shadow:inset 3px 0 0 var(--yellow)}
-  .case.done{box-shadow:inset 3px 0 0 var(--blue)}
-  .head{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
-  .sev{width:8px;height:8px;border-radius:50%;background:var(--alert);flex:0 0 8px;translate:0 -1px}
-  .case.done .sev{background:var(--blue)}
-  .sn{font-weight:700;font-size:14px}
-  .ago{margin-left:auto;font-size:12px;color:var(--soft)}
-  .what{margin:0 0 0 15px;font-size:12.5px}
-  .where{margin:0 0 0 15px;font-size:11px;color:var(--soft)}
+  .case:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:transparent}
+  .case.on{background:var(--wash)}
+  .case.on:before{background:var(--yellow)}
+  .case.done:before{background:var(--blue)}
 
-  .cols{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(280px,1.2fr) minmax(250px,1fr);gap:9px;margin:1px 0 0 15px;align-items:start}
-  .ev{margin:0;padding:0;list-style:none}
-  .ev li{display:flex;gap:7px;font-size:11.5px;color:var(--soft);padding:0}
-  .ev li b{flex:0 0 45px;color:#93A5B8;font-weight:600}
-  .evidence{border-left:1px solid var(--line);padding-left:9px;min-width:0;font-size:10.5px;color:var(--soft)}
-  .evidence div{display:grid;grid-template-columns:43px minmax(0,1fr);gap:4px;margin-bottom:0}
-  .evidence b{color:#93A5B8;font-weight:600}
-  .evidence code{font:10px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;color:#435A72;overflow-wrap:anywhere}
-  .signals{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:3px}
-  .risk,.confidence{display:inline-block;padding:2px 6px;font-size:11px;font-weight:600}
+  .case-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .severity{width:8px;height:8px;border-radius:50%;background:var(--alert);flex:0 0 auto}
+  .case.done .severity{background:var(--blue)}
+  .device{font-size:14px;font-weight:750;letter-spacing:-.1px}
+  .location{font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .age{margin-left:auto;color:var(--soft);font-size:12px;white-space:nowrap}
+
+  .case-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,38%);gap:22px;
+    align-items:center;padding-left:16px}
+  .summary{margin:0 0 7px;font-size:14px;font-weight:600;line-height:1.35}
+  .reason{margin:0 0 8px;color:var(--soft);font-size:12px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .source{display:flex;align-items:center;gap:7px;min-width:0;color:var(--muted);font-size:11px}
+  .source-label{text-transform:uppercase;letter-spacing:.06em;font-size:9px;font-weight:750}
+  .topic{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font:10.5px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;color:#4A6177}
+  .event-button{border:0;background:transparent;color:var(--blue);padding:1px 0;font-size:11px;
+    font-weight:700;cursor:pointer;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}
+
+  .decision{border-left:1px solid var(--line);padding-left:18px;min-width:0}
+  .signals{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+  .risk,.confidence{padding:3px 7px;border-radius:3px;font-size:11px;font-weight:700;white-space:nowrap}
   .risk{background:var(--yellow);color:var(--deep)}
-  .confidence{border:1px solid #9CB9D2;color:var(--blue);background:#F2F7FB}
-  .prop{margin:0 0 3px;font-size:11.5px;font-weight:600;line-height:1.25}
-  button{font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;padding:4px 7px;
-    border:1px solid #E3C700;background:var(--yellow);color:var(--deep);border-radius:2px}
-  button.alt{background:transparent;border-color:var(--line);color:var(--blue);margin-left:6px}
-  button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-  .result{font-size:12.5px;color:var(--blue);margin-top:10px}
+  .confidence{background:#EDF5FB;color:var(--blue)}
+  .proposal{margin:0 0 9px;font-size:12.5px;font-weight:650;line-height:1.35}
+  .actions{display:flex;gap:7px}
+  .primary,.secondary{border-radius:4px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
+  .primary{border:1px solid #E1C500;background:var(--yellow);color:var(--deep)}
+  .secondary{border:1px solid var(--line);background:#fff;color:var(--blue)}
+  button:focus-visible{outline:3px solid rgba(0,59,122,.35);outline-offset:2px}
+  .result{margin-top:7px;font-size:12px;color:var(--blue)}
   [hidden]{display:none!important}
 
+  dialog{width:min(620px,calc(100% - 32px));padding:0;border:0;border-radius:10px;color:var(--ink);
+    box-shadow:0 20px 60px rgba(0,28,58,.28)}
+  dialog::backdrop{background:rgba(0,25,51,.52);backdrop-filter:blur(2px)}
+  .dialog-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;
+    justify-content:space-between;gap:20px}
+  .dialog-head h2{margin:0;font-size:16px}
+  .close{border:0;background:transparent;color:var(--soft);font-size:24px;line-height:1;cursor:pointer}
+  .dialog-body{padding:18px}
+  .field{margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field-label{display:block;margin-bottom:6px;color:var(--soft);font-size:11px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.06em}
+  .field code,.field pre{display:block;margin:0;padding:11px 12px;background:#F2F6F9;border:1px solid var(--line);
+    border-radius:5px;color:#304A63;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;
+    white-space:pre-wrap;overflow-wrap:anywhere}
+
   @media (max-width:980px){
-    .grid{grid-template-columns:1fr;height:auto}
-    #map{height:300px}
-    .cols{grid-template-columns:1fr;gap:10px}
-    .evidence{border-left:0;border-top:1px solid var(--line);padding:8px 0 0}
+    html,body{height:auto}
+    .bar{padding:0 16px}.meta{display:none}
+    main{height:auto;grid-template-columns:1fr;padding:10px}
+    #map{height:300px;flex:none}
+    .cases{display:block;overflow:visible}
+    .case{padding:16px 14px}
+    .case-body{grid-template-columns:1fr;gap:12px}
+    .decision{border-left:0;border-top:1px solid var(--line);padding:12px 0 0}
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:560px){
+    .location{display:none}
+    .case-body{padding-left:0}
+    .actions{flex-wrap:wrap}
+  }
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<div class="bar">
+<header class="bar">
   <div class="mark">tele<span>pass</span> innova</div>
   <div class="meta"><b>412,600</b> units on watch &nbsp;·&nbsp; 19 countries &nbsp;·&nbsp; <b>14:08</b> CEST</div>
-</div>
+</header>
 
-<div class="grid">
-
-  <section class="panel">
-    <div class="ph"><h2>Where it is happening</h2><em>Last 2 hours</em></div>
+<main>
+  <section class="panel" aria-labelledby="map-title">
+    <div class="panel-head"><h2 id="map-title">Active incidents</h2><span>Last 2 hours</span></div>
     <div id="map"></div>
   </section>
 
-  <section class="panel">
-    <div class="ph"><h2>Needs a decision</h2><em id="count">3 open</em></div>
+  <section class="panel" aria-labelledby="decisions-title">
+    <div class="panel-head"><h2 id="decisions-title">Needs a decision</h2><span id="count">3 open</span></div>
     <div class="cases">
 
       <article class="case" id="c1">
-        <div class="head"><i class="sev"></i><span class="sn">TPI-4471-9E2</span><span class="ago">3 min ago</span></div>
-        <div class="what">Running at 84 &deg;C. The toll radio cuts out at 90 &deg;C.</div>
-        <div class="where">ES 7742 KLM &nbsp;·&nbsp; UTA &nbsp;·&nbsp; AP-7 Murcia</div>
-        <div class="cols">
-          <ul class="ev">
-            <li><b>14:05</b><span>Crossed 80 &deg;C, climbing 0.4 &deg;C a minute</span></li>
-            <li><b>14:03</b><span>Cooling fault flag set, no reboot</span></li>
-            <li><b>11 Sep</b><span>Same device, 81 &deg;C for 4 minutes, no ticket</span></li>
-            <li><b>Ahead</b><span>Four tolled gantries before the next stop</span></li>
-          </ul>
-          <div class="evidence" aria-label="Agent input evidence">
-            <div><b>Topic</b><code>telematics/es/ES7742KLM/device/TPI-4471-9E2/health</code></div>
-            <div><b>Payload</b><code>{"temp_c":84,"cooling_fault":true,"rate_c_min":0.4}</code></div>
-          </div>
-          <div class="act">
-            <div class="signals"><span class="risk">80% call within 2 days</span><span class="confidence">Agent 94%</span></div>
-            <p class="prop">Text the fleet manager and ship a replacement linked to the plate.</p>
-            <div class="btns">
-              <button data-go="c1">Send and ship</button><button class="alt" data-hold="c1">Give to engineer</button>
+        <div class="case-head">
+          <i class="severity" aria-hidden="true"></i>
+          <span class="device">TPI-4471-9E2</span>
+          <span class="location">ES 7742 KLM · AP-7 Murcia</span>
+          <span class="age">3 min ago</span>
+        </div>
+        <div class="case-body">
+          <div>
+            <p class="summary">Running at 84 °C. The toll radio cuts out at 90 °C.</p>
+            <p class="reason">Cooling fault · climbing 0.4 °C/min · four gantries ahead</p>
+            <div class="source">
+              <span class="source-label">Solace</span>
+              <code class="topic">telematics/es/ES7742KLM/device/TPI-4471-9E2/health</code>
+              <button class="event-button" data-event="c1">View event</button>
             </div>
+          </div>
+          <div class="decision">
+            <div class="signals"><span class="risk">80% call risk</span><span class="confidence">94% confidence</span></div>
+            <p class="proposal">Text the fleet manager and ship a replacement linked to the plate.</p>
+            <div class="actions"><button class="primary" data-go="c1">Send and ship</button><button class="secondary" data-hold="c1">Give to engineer</button></div>
             <div class="result" hidden></div>
           </div>
         </div>
       </article>
 
       <article class="case" id="c2">
-        <div class="head"><i class="sev"></i><span class="sn">TPI-2218-5C7</span><span class="ago">18 min ago</span></div>
-        <div class="what">Nine reboots, battery at 12 percent. Three gantries already missed.</div>
-        <div class="where">IT FT921 BX &nbsp;·&nbsp; Telepass Business &nbsp;·&nbsp; A22 Brennero</div>
-        <div class="cols">
-          <ul class="ev">
-            <li><b>13:50</b><span>Ninth reboot, never up longer than 21 minutes</span></li>
-            <li><b>13:12</b><span>Gantry A22-17 read no unit, transit unmatched</span></li>
-            <li><b>12:58</b><span>No charge current from the windscreen mount</span></li>
-            <li><b>Next</b><span>Two cash payments will come back as duplicate charges</span></li>
-          </ul>
-          <div class="evidence" aria-label="Agent input evidence">
-            <div><b>Topic</b><code>telematics/it/ITFT921BX/device/TPI-2218-5C7/power</code></div>
-            <div><b>Payload</b><code>{"battery_pct":12,"reboots":9,"missed_gantries":3}</code></div>
-          </div>
-          <div class="act">
-            <div class="signals"><span class="risk">91% billing dispute within 24 h</span><span class="confidence">Agent 97%</span></div>
-            <p class="prop">Hold the three transits off the invoice and book a swap at Verona tonight.</p>
-            <div class="btns">
-              <button data-go="c2">Hold and book</button><button class="alt" data-hold="c2">Give to engineer</button>
+        <div class="case-head">
+          <i class="severity" aria-hidden="true"></i>
+          <span class="device">TPI-2218-5C7</span>
+          <span class="location">IT FT921 BX · A22 Brennero</span>
+          <span class="age">18 min ago</span>
+        </div>
+        <div class="case-body">
+          <div>
+            <p class="summary">Nine reboots, battery at 12%. Three gantries already missed.</p>
+            <p class="reason">No mount charge · duplicate charges likely on next invoice</p>
+            <div class="source">
+              <span class="source-label">Solace</span>
+              <code class="topic">telematics/it/ITFT921BX/device/TPI-2218-5C7/power</code>
+              <button class="event-button" data-event="c2">View event</button>
             </div>
+          </div>
+          <div class="decision">
+            <div class="signals"><span class="risk">91% dispute risk</span><span class="confidence">97% confidence</span></div>
+            <p class="proposal">Hold the three transits and book a device swap in Verona tonight.</p>
+            <div class="actions"><button class="primary" data-go="c2">Hold and book</button><button class="secondary" data-hold="c2">Give to engineer</button></div>
             <div class="result" hidden></div>
           </div>
         </div>
       </article>
 
       <article class="case" id="c3">
-        <div class="head"><i class="sev"></i><span class="sn">37 units on firmware 5.2.1</span><span class="ago">1 h 12 min ago</span></div>
-        <div class="what">Not read at Austrian gantries since 06:14. Four tickets open, one cause.</div>
-        <div class="where">UTA and DKV &nbsp;·&nbsp; ASFINAG, Austria</div>
-        <div class="cols">
-          <ul class="ev">
-            <li><b>06:14</b><span>First miss, three minutes after the firmware batch finished</span></li>
-            <li><b>07:02</b><span>Only 5.2.1 affected, 5.1.4 fine on the same roads</span></li>
-            <li><b>13:40</b><span>Fourth partner ticket, same fault in different words</span></li>
-            <li><b>Now</b><span>33 devices still running, same route, same firmware</span></li>
-          </ul>
-          <div class="evidence" aria-label="Agent input evidence">
-            <div><b>Topic</b><code>tolling/at/asfinag/gantry/read-failure</code></div>
-            <div><b>Payload</b><code>{"firmware":"5.2.1","affected":37,"tickets":4}</code></div>
-          </div>
-          <div class="act">
-            <div class="signals"><span class="risk">19 more tickets expected</span><span class="confidence">Agent 92%</span></div>
-            <p class="prop">Merge the four tickets, notify both partners, stage the rollback.</p>
-            <div class="btns">
-              <button data-go="c3">Merge and notify</button><button class="alt" data-hold="c3">Give to engineer</button>
+        <div class="case-head">
+          <i class="severity" aria-hidden="true"></i>
+          <span class="device">37 units on firmware 5.2.1</span>
+          <span class="location">UTA + DKV · ASFINAG, Austria</span>
+          <span class="age">1 h ago</span>
+        </div>
+        <div class="case-body">
+          <div>
+            <p class="summary">Austrian gantries stopped reading these units after an update.</p>
+            <p class="reason">Four related tickets · 5.1.4 devices unaffected</p>
+            <div class="source">
+              <span class="source-label">Solace</span>
+              <code class="topic">tolling/at/asfinag/gantry/read-failure</code>
+              <button class="event-button" data-event="c3">View event</button>
             </div>
+          </div>
+          <div class="decision">
+            <div class="signals"><span class="risk">19 tickets expected</span><span class="confidence">92% confidence</span></div>
+            <p class="proposal">Merge the tickets, notify both partners, and stage the rollback.</p>
+            <div class="actions"><button class="primary" data-go="c3">Merge and notify</button><button class="secondary" data-hold="c3">Give to engineer</button></div>
             <div class="result" hidden></div>
           </div>
         </div>
@@ -180,65 +215,86 @@
 
     </div>
   </section>
-</div>
+</main>
+
+<dialog id="event-dialog" aria-labelledby="event-title">
+  <div class="dialog-head"><h2 id="event-title">Solace event</h2><button class="close" aria-label="Close event details">×</button></div>
+  <div class="dialog-body">
+    <div class="field"><span class="field-label">Topic</span><code id="dialog-topic"></code></div>
+    <div class="field"><span class="field-label">Payload read by agent</span><pre id="dialog-payload"></pre></div>
+  </div>
+</dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 (function(){
   var CASES = {
-    c1:{ll:[37.99,-1.13], label:'Murcia', r:8,
-         done:"Replacement shipped, text sent, ticket suppressed for 72 h."},
-    c2:{ll:[46.90,11.50], label:'Brennero', r:8,
-         done:"Three transits held off the invoice, swap booked Verona 21:00, driver told."},
-    c3:{ll:[47.80,13.05], label:'Austria, 37 units', r:13,
-         done:"Four tickets merged, both partners notified, rollback waiting on development."}
+    c1:{ll:[37.99,-1.13],label:'Murcia',r:8,topic:'telematics/es/ES7742KLM/device/TPI-4471-9E2/health',
+      payload:{temp_c:84,cooling_fault:true,rate_c_min:0.4},
+      done:'Replacement shipped, text sent, ticket suppressed for 72 h.'},
+    c2:{ll:[46.90,11.50],label:'Brennero',r:8,topic:'telematics/it/ITFT921BX/device/TPI-2218-5C7/power',
+      payload:{battery_pct:12,reboots:9,missed_gantries:3},
+      done:'Three transits held, swap booked in Verona for 21:00, driver told.'},
+    c3:{ll:[47.80,13.05],label:'Austria, 37 units',r:13,topic:'tolling/at/asfinag/gantry/read-failure',
+      payload:{firmware:'5.2.1',affected:37,tickets:4},
+      done:'Four tickets merged, both partners notified, rollback staged.'}
   };
 
-  var map = L.map('map', {scrollWheelZoom:false, zoomControl:true, attributionControl:true})
-             .setView([45.2, 6.0], 5);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'&copy; OpenStreetMap contributors',
-    maxZoom:19
+  var map = L.map('map',{scrollWheelZoom:false,zoomControl:true,attributionControl:true}).setView([45.2,6.0],5);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'&copy; OpenStreetMap contributors',maxZoom:19
   }).addTo(map);
 
   Object.keys(CASES).forEach(function(id){
-    var c = CASES[id];
-    c.marker = L.circleMarker(c.ll, {
-      radius:c.r, color:'#fff', weight:2, fillColor:'#C63B3B', fillOpacity:.92
-    }).addTo(map);
-    c.marker.bindTooltip(c.label, {permanent:true, direction:'right', className:'lbl', offset:[8,0]});
-    c.marker.on('click', function(){ select(id); });
+    var c=CASES[id];
+    c.marker=L.circleMarker(c.ll,{radius:c.r,color:'#fff',weight:2,fillColor:'#C83F43',fillOpacity:.94}).addTo(map);
+    c.marker.bindTooltip(c.label,{permanent:true,direction:'right',className:'lbl',offset:[8,0]});
+    c.marker.on('click',function(){select(id);});
   });
 
   function select(id){
     Object.keys(CASES).forEach(function(k){
-      var el = document.getElementById(k);
-      var on = (k === id) && !el.classList.contains('done');
-      el.classList.toggle('on', on);
-      CASES[k].marker.setStyle({weight: on ? 4 : 2});
+      var el=document.getElementById(k);
+      var active=k===id&&!el.classList.contains('done');
+      el.classList.toggle('on',active);
+      CASES[k].marker.setStyle({weight:active?4:2});
     });
-    document.getElementById(id).scrollIntoView({block:'nearest', behavior:'smooth'});
+    document.getElementById(id).scrollIntoView({block:'nearest',behavior:'smooth'});
   }
 
   document.querySelectorAll('.case').forEach(function(el){
-    el.addEventListener('click', function(){ if(!el.classList.contains('done')) select(el.id); });
+    el.addEventListener('click',function(e){
+      if(!e.target.closest('button')&&!el.classList.contains('done')) select(el.id);
+    });
   });
 
-  document.addEventListener('click', function(e){
-    var go = e.target.closest('[data-go]'), hold = e.target.closest('[data-hold]');
-    var id = go ? go.dataset.go : hold ? hold.dataset.hold : null;
-    if(!id) return;
-    var el = document.getElementById(id);
-    el.classList.remove('on'); el.classList.add('done');
-    el.querySelector('.btns').hidden = true;
-    var r = el.querySelector('.result');
-    r.textContent = go ? CASES[id].done : "Sent to an engineer with the evidence and the proposed action.";
-    r.hidden = false;
-    CASES[id].marker.setStyle({fillColor:'#003B7A', weight:2});
-    var n = document.querySelectorAll('.case:not(.done)').length;
-    document.getElementById('count').textContent = n === 0 ? 'all clear' : n + ' open';
+  var dialog=document.getElementById('event-dialog');
+  document.addEventListener('click',function(e){
+    var eventButton=e.target.closest('[data-event]');
+    if(eventButton){
+      var event=CASES[eventButton.dataset.event];
+      document.getElementById('dialog-topic').textContent=event.topic;
+      document.getElementById('dialog-payload').textContent=JSON.stringify(event.payload,null,2);
+      dialog.showModal();
+      return;
+    }
+    if(e.target.closest('.close')){dialog.close();return;}
+
+    var go=e.target.closest('[data-go]'),hold=e.target.closest('[data-hold]');
+    var id=go?go.dataset.go:hold?hold.dataset.hold:null;
+    if(!id)return;
+    var el=document.getElementById(id);
+    el.classList.remove('on');el.classList.add('done');
+    el.querySelector('.actions').hidden=true;
+    var result=el.querySelector('.result');
+    result.textContent=go?CASES[id].done:'Sent to an engineer with the event evidence and proposed action.';
+    result.hidden=false;
+    CASES[id].marker.setStyle({fillColor:'#003B7A',weight:2});
+    var open=document.querySelectorAll('.case:not(.done)').length;
+    document.getElementById('count').textContent=open===0?'All clear':open+' open';
   });
 
+  dialog.addEventListener('click',function(e){if(e.target===dialog)dialog.close();});
   select('c1');
 })();
 </script>
