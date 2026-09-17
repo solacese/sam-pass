@@ -19,17 +19,17 @@
     font:15px/1.45 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
 
   .bar{background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;
-    padding:0 20px;height:54px;gap:16px}
+    padding:0 20px;height:48px;gap:16px}
   .mark{font-size:18px;font-weight:700;letter-spacing:-.4px}
   .mark span{color:var(--yellow)}
   .bar .meta{font-size:13px;color:#AFC8DE}
   .bar .meta b{color:#fff;font-weight:600}
 
-  .grid{display:grid;grid-template-columns:minmax(300px,27%) minmax(0,1fr);gap:12px;padding:12px;
-    height:calc(100% - 54px);min-height:0}
+  .grid{display:grid;grid-template-columns:minmax(190px,17%) minmax(0,1fr);gap:12px;padding:12px;
+    height:calc(100% - 48px);min-height:0}
   .panel{background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
   .ph{display:flex;justify-content:space-between;align-items:baseline;
-    padding:11px 15px;border-bottom:1px solid var(--line);flex:0 0 auto}
+    padding:8px 13px;border-bottom:1px solid var(--line);flex:0 0 auto}
   .ph h2{margin:0;font-size:14px;font-weight:600}
   .ph em{font-style:normal;font-size:12.5px;color:var(--soft)}
 
@@ -41,26 +41,32 @@
   .lbl:before{display:none}
 
   .cases{overflow-y:auto;min-height:0}
-  .case{border-bottom:1px solid var(--line);padding:4px 13px}
+  .case{border-bottom:1px solid var(--line);padding:1px 11px}
   .case:last-child{border-bottom:0}
   .case.on{background:#F7FAFC;box-shadow:inset 3px 0 0 var(--yellow)}
   .case.done{box-shadow:inset 3px 0 0 var(--blue)}
-  .head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .head{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
   .sev{width:8px;height:8px;border-radius:50%;background:var(--alert);flex:0 0 8px;translate:0 -1px}
   .case.done .sev{background:var(--blue)}
-  .sn{font-weight:700;font-size:15px}
+  .sn{font-weight:700;font-size:14px}
   .ago{margin-left:auto;font-size:12px;color:var(--soft)}
-  .what{margin:2px 0 0 17px;font-size:13.5px}
-  .where{margin:0 0 0 17px;font-size:12px;color:var(--soft)}
+  .what{margin:0 0 0 15px;font-size:12.5px}
+  .where{margin:0 0 0 15px;font-size:11px;color:var(--soft)}
 
-  .cols{display:grid;grid-template-columns:minmax(300px,1fr) minmax(250px,300px);gap:14px;margin:5px 0 0 17px;align-items:start}
+  .cols{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(280px,1.2fr) minmax(250px,1fr);gap:9px;margin:1px 0 0 15px;align-items:start}
   .ev{margin:0;padding:0;list-style:none}
-  .ev li{display:flex;gap:10px;font-size:12px;color:var(--soft);padding:1px 0}
-  .ev li b{flex:0 0 52px;color:#93A5B8;font-weight:600}
-  .risk{background:var(--yellow);display:inline-block;padding:2px 7px;font-size:12px;
-    font-weight:600;color:var(--deep);margin-bottom:5px}
-  .prop{margin:0 0 7px;font-size:13px;font-weight:600;line-height:1.35}
-  button{font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:6px 10px;
+  .ev li{display:flex;gap:7px;font-size:11.5px;color:var(--soft);padding:0}
+  .ev li b{flex:0 0 45px;color:#93A5B8;font-weight:600}
+  .evidence{border-left:1px solid var(--line);padding-left:9px;min-width:0;font-size:10.5px;color:var(--soft)}
+  .evidence div{display:grid;grid-template-columns:43px minmax(0,1fr);gap:4px;margin-bottom:0}
+  .evidence b{color:#93A5B8;font-weight:600}
+  .evidence code{font:10px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;color:#435A72;overflow-wrap:anywhere}
+  .signals{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:3px}
+  .risk,.confidence{display:inline-block;padding:2px 6px;font-size:11px;font-weight:600}
+  .risk{background:var(--yellow);color:var(--deep)}
+  .confidence{border:1px solid #9CB9D2;color:var(--blue);background:#F2F7FB}
+  .prop{margin:0 0 3px;font-size:11.5px;font-weight:600;line-height:1.25}
+  button{font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;padding:4px 7px;
     border:1px solid #E3C700;background:var(--yellow);color:var(--deep);border-radius:2px}
   button.alt{background:transparent;border-color:var(--line);color:var(--blue);margin-left:6px}
   button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
@@ -70,7 +76,8 @@
   @media (max-width:980px){
     .grid{grid-template-columns:1fr;height:auto}
     #map{height:300px}
-    .cols{grid-template-columns:1fr;gap:14px}
+    .cols{grid-template-columns:1fr;gap:10px}
+    .evidence{border-left:0;border-top:1px solid var(--line);padding:8px 0 0}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -104,8 +111,12 @@
             <li><b>11 Sep</b><span>Same device, 81 &deg;C for 4 minutes, no ticket</span></li>
             <li><b>Ahead</b><span>Four tolled gantries before the next stop</span></li>
           </ul>
+          <div class="evidence" aria-label="Agent input evidence">
+            <div><b>Topic</b><code>telematics/es/ES7742KLM/device/TPI-4471-9E2/health</code></div>
+            <div><b>Payload</b><code>{"temp_c":84,"cooling_fault":true,"rate_c_min":0.4}</code></div>
+          </div>
           <div class="act">
-            <div class="risk">80% call within 2 days</div>
+            <div class="signals"><span class="risk">80% call within 2 days</span><span class="confidence">Agent 94%</span></div>
             <p class="prop">Text the fleet manager and ship a replacement linked to the plate.</p>
             <div class="btns">
               <button data-go="c1">Send and ship</button><button class="alt" data-hold="c1">Give to engineer</button>
@@ -126,8 +137,12 @@
             <li><b>12:58</b><span>No charge current from the windscreen mount</span></li>
             <li><b>Next</b><span>Two cash payments will come back as duplicate charges</span></li>
           </ul>
+          <div class="evidence" aria-label="Agent input evidence">
+            <div><b>Topic</b><code>telematics/it/ITFT921BX/device/TPI-2218-5C7/power</code></div>
+            <div><b>Payload</b><code>{"battery_pct":12,"reboots":9,"missed_gantries":3}</code></div>
+          </div>
           <div class="act">
-            <div class="risk">91% billing dispute within 24 h</div>
+            <div class="signals"><span class="risk">91% billing dispute within 24 h</span><span class="confidence">Agent 97%</span></div>
             <p class="prop">Hold the three transits off the invoice and book a swap at Verona tonight.</p>
             <div class="btns">
               <button data-go="c2">Hold and book</button><button class="alt" data-hold="c2">Give to engineer</button>
@@ -148,8 +163,12 @@
             <li><b>13:40</b><span>Fourth partner ticket, same fault in different words</span></li>
             <li><b>Now</b><span>33 devices still running, same route, same firmware</span></li>
           </ul>
+          <div class="evidence" aria-label="Agent input evidence">
+            <div><b>Topic</b><code>tolling/at/asfinag/gantry/read-failure</code></div>
+            <div><b>Payload</b><code>{"firmware":"5.2.1","affected":37,"tickets":4}</code></div>
+          </div>
           <div class="act">
-            <div class="risk">19 more tickets expected</div>
+            <div class="signals"><span class="risk">19 more tickets expected</span><span class="confidence">Agent 92%</span></div>
             <p class="prop">Merge the four tickets, notify both partners, stage the rollback.</p>
             <div class="btns">
               <button data-go="c3">Merge and notify</button><button class="alt" data-hold="c3">Give to engineer</button>
