@@ -25,7 +25,7 @@
   .bar .meta{font-size:13px;color:#AFC8DE}
   .bar .meta b{color:#fff;font-weight:600}
 
-  .grid{display:grid;grid-template-columns:33% 1fr;gap:14px;padding:14px;
+  .grid{display:grid;grid-template-columns:minmax(300px,27%) minmax(0,1fr);gap:12px;padding:12px;
     height:calc(100% - 54px);min-height:0}
   .panel{background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
   .ph{display:flex;justify-content:space-between;align-items:baseline;
@@ -41,7 +41,7 @@
   .lbl:before{display:none}
 
   .cases{overflow-y:auto;min-height:0}
-  .case{border-bottom:1px solid var(--line);padding:16px 18px}
+  .case{border-bottom:1px solid var(--line);padding:4px 13px}
   .case:last-child{border-bottom:0}
   .case.on{background:#F7FAFC;box-shadow:inset 3px 0 0 var(--yellow)}
   .case.done{box-shadow:inset 3px 0 0 var(--blue)}
@@ -50,17 +50,17 @@
   .case.done .sev{background:var(--blue)}
   .sn{font-weight:700;font-size:15px}
   .ago{margin-left:auto;font-size:12px;color:var(--soft)}
-  .what{margin:5px 0 0 17px;font-size:14px}
-  .where{margin:2px 0 0 17px;font-size:12.5px;color:var(--soft)}
+  .what{margin:2px 0 0 17px;font-size:13.5px}
+  .where{margin:0 0 0 17px;font-size:12px;color:var(--soft)}
 
-  .cols{display:grid;grid-template-columns:1fr 300px;gap:22px;margin:12px 0 0 17px;align-items:start}
+  .cols{display:grid;grid-template-columns:minmax(300px,1fr) minmax(250px,300px);gap:14px;margin:5px 0 0 17px;align-items:start}
   .ev{margin:0;padding:0;list-style:none}
-  .ev li{display:flex;gap:10px;font-size:12.5px;color:var(--soft);padding:2px 0}
+  .ev li{display:flex;gap:10px;font-size:12px;color:var(--soft);padding:1px 0}
   .ev li b{flex:0 0 52px;color:#93A5B8;font-weight:600}
   .risk{background:var(--yellow);display:inline-block;padding:2px 7px;font-size:12px;
-    font-weight:600;color:var(--deep);margin-bottom:9px}
-  .prop{margin:0 0 10px;font-size:13.5px;font-weight:600}
-  button{font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 12px;
+    font-weight:600;color:var(--deep);margin-bottom:5px}
+  .prop{margin:0 0 7px;font-size:13px;font-weight:600;line-height:1.35}
+  button{font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:6px 10px;
     border:1px solid #E3C700;background:var(--yellow);color:var(--deep);border-radius:2px}
   button.alt{background:transparent;border-color:var(--line);color:var(--blue);margin-left:6px}
   button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
@@ -177,9 +177,9 @@
 
   var map = L.map('map', {scrollWheelZoom:false, zoomControl:true, attributionControl:true})
              .setView([45.2, 6.0], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution:'&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains:'abcd', maxZoom:19
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'&copy; OpenStreetMap contributors',
+    maxZoom:19
   }).addTo(map);
 
   Object.keys(CASES).forEach(function(id){
