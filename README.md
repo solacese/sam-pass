@@ -1,1 +1,1 @@
-# sam-telepass
+# sam-pass
