@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telepass Innova — Device Watch</title>
+<meta name="description" content="A live operations view of Telepass devices that need attention.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2212%22 fill=%22%23003B7A%22/><path d=%22M14 22h36v8H37v20H27V30H14z%22 fill=%22%23FEE01A%22/></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+  :root{
+    --blue:#003B7A; --deep:#002246; --yellow:#FEE01A;
+    --ink:#16283C; --soft:#6B7E93; --line:#DCE4EC;
+    --paper:#EEF2F6; --white:#fff; --alert:#C63B3B;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:15px/1.45 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
+
+  .bar{background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;
+    padding:0 20px;height:54px;gap:16px}
+  .mark{font-size:18px;font-weight:700;letter-spacing:-.4px}
+  .mark span{color:var(--yellow)}
+  .bar .meta{font-size:13px;color:#AFC8DE}
+  .bar .meta b{color:#fff;font-weight:600}
+
+  .grid{display:grid;grid-template-columns:33% 1fr;gap:14px;padding:14px;
+    height:calc(100% - 54px);min-height:0}
+  .panel{background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+  .ph{display:flex;justify-content:space-between;align-items:baseline;
+    padding:11px 15px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .ph h2{margin:0;font-size:14px;font-weight:600}
+  .ph em{font-style:normal;font-size:12.5px;color:var(--soft)}
+
+  #map{flex:1 1 auto;min-height:320px;background:#E8EEF3}
+  .leaflet-container{font:inherit}
+  .leaflet-control-attribution{font-size:10px;color:#93A5B8}
+  .lbl{background:transparent;border:0;box-shadow:none;padding:0;
+    font:600 11.5px "Segoe UI",system-ui,sans-serif;color:#2C3E52;white-space:nowrap}
+  .lbl:before{display:none}
+
+  .cases{overflow-y:auto;min-height:0}
+  .case{border-bottom:1px solid var(--line);padding:16px 18px}
+  .case:last-child{border-bottom:0}
+  .case.on{background:#F7FAFC;box-shadow:inset 3px 0 0 var(--yellow)}
+  .case.done{box-shadow:inset 3px 0 0 var(--blue)}
+  .head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .sev{width:8px;height:8px;border-radius:50%;background:var(--alert);flex:0 0 8px;translate:0 -1px}
+  .case.done .sev{background:var(--blue)}
+  .sn{font-weight:700;font-size:15px}
+  .ago{margin-left:auto;font-size:12px;color:var(--soft)}
+  .what{margin:5px 0 0 17px;font-size:14px}
+  .where{margin:2px 0 0 17px;font-size:12.5px;color:var(--soft)}
+
+  .cols{display:grid;grid-template-columns:1fr 300px;gap:22px;margin:12px 0 0 17px;align-items:start}
+  .ev{margin:0;padding:0;list-style:none}
+  .ev li{display:flex;gap:10px;font-size:12.5px;color:var(--soft);padding:2px 0}
+  .ev li b{flex:0 0 52px;color:#93A5B8;font-weight:600}
+  .risk{background:var(--yellow);display:inline-block;padding:2px 7px;font-size:12px;
+    font-weight:600;color:var(--deep);margin-bottom:9px}
+  .prop{margin:0 0 10px;font-size:13.5px;font-weight:600}
+  button{font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 12px;
+    border:1px solid #E3C700;background:var(--yellow);color:var(--deep);border-radius:2px}
+  button.alt{background:transparent;border-color:var(--line);color:var(--blue);margin-left:6px}
+  button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+  .result{font-size:12.5px;color:var(--blue);margin-top:10px}
+  [hidden]{display:none!important}
+
+  @media (max-width:980px){
+    .grid{grid-template-columns:1fr;height:auto}
+    #map{height:300px}
+    .cols{grid-template-columns:1fr;gap:14px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="mark">tele<span>pass</span> innova</div>
+  <div class="meta"><b>412,600</b> units on watch &nbsp;·&nbsp; 19 countries &nbsp;·&nbsp; <b>14:08</b> CEST</div>
+</div>
+
+<div class="grid">
+
+  <section class="panel">
+    <div class="ph"><h2>Where it is happening</h2><em>Last 2 hours</em></div>
+    <div id="map"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Needs a decision</h2><em id="count">3 open</em></div>
+    <div class="cases">
+
+      <article class="case" id="c1">
+        <div class="head"><i class="sev"></i><span class="sn">TPI-4471-9E2</span><span class="ago">3 min ago</span></div>
+        <div class="what">Running at 84 &deg;C. The toll radio cuts out at 90 &deg;C.</div>
+        <div class="where">ES 7742 KLM &nbsp;·&nbsp; UTA &nbsp;·&nbsp; AP-7 Murcia</div>
+        <div class="cols">
+          <ul class="ev">
+            <li><b>14:05</b><span>Crossed 80 &deg;C, climbing 0.4 &deg;C a minute</span></li>
+            <li><b>14:03</b><span>Cooling fault flag set, no reboot</span></li>
+            <li><b>11 Sep</b><span>Same device, 81 &deg;C for 4 minutes, no ticket</span></li>
+            <li><b>Ahead</b><span>Four tolled gantries before the next stop</span></li>
+          </ul>
+          <div class="act">
+            <div class="risk">80% call within 2 days</div>
+            <p class="prop">Text the fleet manager and ship a replacement linked to the plate.</p>
+            <div class="btns">
+              <button data-go="c1">Send and ship</button><button class="alt" data-hold="c1">Give to engineer</button>
+            </div>
+            <div class="result" hidden></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case" id="c2">
+        <div class="head"><i class="sev"></i><span class="sn">TPI-2218-5C7</span><span class="ago">18 min ago</span></div>
+        <div class="what">Nine reboots, battery at 12 percent. Three gantries already missed.</div>
+        <div class="where">IT FT921 BX &nbsp;·&nbsp; Telepass Business &nbsp;·&nbsp; A22 Brennero</div>
+        <div class="cols">
+          <ul class="ev">
+            <li><b>13:50</b><span>Ninth reboot, never up longer than 21 minutes</span></li>
+            <li><b>13:12</b><span>Gantry A22-17 read no unit, transit unmatched</span></li>
+            <li><b>12:58</b><span>No charge current from the windscreen mount</span></li>
+            <li><b>Next</b><span>Two cash payments will come back as duplicate charges</span></li>
+          </ul>
+          <div class="act">
+            <div class="risk">91% billing dispute within 24 h</div>
+            <p class="prop">Hold the three transits off the invoice and book a swap at Verona tonight.</p>
+            <div class="btns">
+              <button data-go="c2">Hold and book</button><button class="alt" data-hold="c2">Give to engineer</button>
+            </div>
+            <div class="result" hidden></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case" id="c3">
+        <div class="head"><i class="sev"></i><span class="sn">37 units on firmware 5.2.1</span><span class="ago">1 h 12 min ago</span></div>
+        <div class="what">Not read at Austrian gantries since 06:14. Four tickets open, one cause.</div>
+        <div class="where">UTA and DKV &nbsp;·&nbsp; ASFINAG, Austria</div>
+        <div class="cols">
+          <ul class="ev">
+            <li><b>06:14</b><span>First miss, three minutes after the firmware batch finished</span></li>
+            <li><b>07:02</b><span>Only 5.2.1 affected, 5.1.4 fine on the same roads</span></li>
+            <li><b>13:40</b><span>Fourth partner ticket, same fault in different words</span></li>
+            <li><b>Now</b><span>33 devices still running, same route, same firmware</span></li>
+          </ul>
+          <div class="act">
+            <div class="risk">19 more tickets expected</div>
+            <p class="prop">Merge the four tickets, notify both partners, stage the rollback.</p>
+            <div class="btns">
+              <button data-go="c3">Merge and notify</button><button class="alt" data-hold="c3">Give to engineer</button>
+            </div>
+            <div class="result" hidden></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+(function(){
+  var CASES = {
+    c1:{ll:[37.99,-1.13], label:'Murcia', r:8,
+         done:"Replacement shipped, text sent, ticket suppressed for 72 h."},
+    c2:{ll:[46.90,11.50], label:'Brennero', r:8,
+         done:"Three transits held off the invoice, swap booked Verona 21:00, driver told."},
+    c3:{ll:[47.80,13.05], label:'Austria, 37 units', r:13,
+         done:"Four tickets merged, both partners notified, rollback waiting on development."}
+  };
+
+  var map = L.map('map', {scrollWheelZoom:false, zoomControl:true, attributionControl:true})
+             .setView([45.2, 6.0], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains:'abcd', maxZoom:19
+  }).addTo(map);
+
+  Object.keys(CASES).forEach(function(id){
+    var c = CASES[id];
+    c.marker = L.circleMarker(c.ll, {
+      radius:c.r, color:'#fff', weight:2, fillColor:'#C63B3B', fillOpacity:.92
+    }).addTo(map);
+    c.marker.bindTooltip(c.label, {permanent:true, direction:'right', className:'lbl', offset:[8,0]});
+    c.marker.on('click', function(){ select(id); });
+  });
+
+  function select(id){
+    Object.keys(CASES).forEach(function(k){
+      var el = document.getElementById(k);
+      var on = (k === id) && !el.classList.contains('done');
+      el.classList.toggle('on', on);
+      CASES[k].marker.setStyle({weight: on ? 4 : 2});
+    });
+    document.getElementById(id).scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  document.querySelectorAll('.case').forEach(function(el){
+    el.addEventListener('click', function(){ if(!el.classList.contains('done')) select(el.id); });
+  });
+
+  document.addEventListener('click', function(e){
+    var go = e.target.closest('[data-go]'), hold = e.target.closest('[data-hold]');
+    var id = go ? go.dataset.go : hold ? hold.dataset.hold : null;
+    if(!id) return;
+    var el = document.getElementById(id);
+    el.classList.remove('on'); el.classList.add('done');
+    el.querySelector('.btns').hidden = true;
+    var r = el.querySelector('.result');
+    r.textContent = go ? CASES[id].done : "Sent to an engineer with the evidence and the proposed action.";
+    r.hidden = false;
+    CASES[id].marker.setStyle({fillColor:'#003B7A', weight:2});
+    var n = document.querySelectorAll('.case:not(.done)').length;
+    document.getElementById('count').textContent = n === 0 ? 'all clear' : n + ' open';
+  });
+
+  select('c1');
+})();
+</script>
+</body>
+</html>
